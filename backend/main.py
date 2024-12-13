@@ -2,7 +2,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from utils import extract_text_from_pdf
-from rag_pipeline import summarize_with_rag
+from rag_pipelines import summarize_with_rag
 from gtts import gTTS
 import os
 
