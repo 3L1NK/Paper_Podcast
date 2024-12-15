@@ -1,8 +1,8 @@
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 
 def summarize_with_rag(document_text):
     # Split the text into manageable chunks

@@ -7,6 +7,9 @@ from gtts import gTTS
 import os
 
 app = FastAPI()
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Paper to Podcast API. Use /upload to upload files."}
 
 # Enable CORS for development
 app.add_middleware(
