@@ -48,27 +48,27 @@ fileInput.addEventListener("change", () => {
 
 // Upload file to the backend
 async function uploadFile(file) {
-  // Show loading state
-  dropzone.innerHTML = "<p class='text-gray-600'>Processing your file... Please wait.</p>";
+  dropzone.innerHTML = "<p>Processing your file... Please wait.</p>";
 
   const formData = new FormData();
   formData.append("file", file);
 
   try {
-    // Send file to the backend
-    const response = await fetch("http://localhost:8000/upload", {
+    const response = await fetch("http://127.0.0.1:8000/upload", {
       method: "POST",
       body: formData,
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to process the file. Please try again.");
+    const data = await response.json();
+    console.log("Backend Response:", data); 
+
+    if (!data.audio_url) {
+      throw new Error("Audio URL not returned by backend.");
     }
 
-    const data = await response.json();
-
-    // Display the audio player with the processed podcast
+    // Set the audio player and download link
     showAudio(data.audio_url);
+
   } catch (error) {
     dropzone.innerHTML = `<p class='text-red-500'>Error: ${error.message}</p>`;
   }
