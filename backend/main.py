@@ -1,10 +1,9 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Query
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from utils import extract_text_from_pdf
 from rag_pipelines import summarize_with_rag
-from gtts import gTTS
+from tts_services import google_tts, amazon_polly_tts, elevenlabs_tts
 import os
 
 # Directories
@@ -16,56 +15,61 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 os.makedirs(TEMP_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# FastAPI app
+# FastAPI App Initialization
 app = FastAPI()
 
-# CORS middleware
+# Enable CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Allow all origins (for development only, restrict in production)
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount static directory
-app.mount("/audio", StaticFiles(directory=OUTPUT_DIR), name="audio")
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the Paper to Podcast API. Use /upload to upload files."}
 
 @app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(
+    file: UploadFile = File(...), 
+    tts_service: str = Query("google")  # Default TTS service is Google
+):
     try:
-        # Save file to TEMP_DIR
+        # Save the uploaded file
         file_location = os.path.join(TEMP_DIR, file.filename)
-        print("file loc = " + file_location)
         with open(file_location, "wb") as f:
             f.write(await file.read())
 
-        # Extract and summarize text
+        # Extract text from the uploaded PDF
         text = extract_text_from_pdf(file_location)
-        #print("text = " +text)
         summary = summarize_with_rag(text)
-        print("Generated Summary:", summary)
 
-        # Generate audio file
-        audio_filename = f"{os.path.splitext(file.filename)[0]}_podcast.mp3"
-        audio_filepath = os.path.join(OUTPUT_DIR, audio_filename)
-        tts = gTTS(summary, lang="en")
-        tts.save(audio_filepath)
+        # Generate the audio file
+        audio_filename = os.path.join(OUTPUT_DIR, f"{os.path.splitext(file.filename)[0]}_podcast.mp3")
+        
+        if tts_service == "google":
+            google_tts(summary, audio_filename)
+        elif tts_service == "amazon":
+            amazon_polly_tts(summary, audio_filename)
+        elif tts_service == "elevenlabs":
+            elevenlabs_tts(summary, audio_filename)
+        else:
+            raise ValueError("Unsupported TTS service selected")
 
-        # Clean up
+        # Clean up the temporary uploaded file
         os.remove(file_location)
-
-        # Return URL
-        return {"audio_url": f"http://127.0.0.1:8000/audio/{audio_filename}"}
+        
+        return {
+            "audio_url": f"http://127.0.0.1:8000/audio/{os.path.basename(audio_filename)}"
+        }
 
     except Exception as e:
         return {"error": str(e)}
 
+
 @app.get("/audio/{audio_file}")
 def get_audio(audio_file: str):
+    """
+    Retrieve the generated audio file from the server.
+    """
     audio_path = os.path.join(OUTPUT_DIR, audio_file)
     if os.path.exists(audio_path):
         return FileResponse(audio_path, media_type="audio/mpeg", filename=audio_file)
