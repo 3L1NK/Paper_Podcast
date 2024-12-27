@@ -7,48 +7,80 @@
   <script defer src="app.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="./dist/output.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    /* Light Mode Gradient Background */
+    .gradient-bg {
+      background: linear-gradient(135deg, #f06, #9f6, #06f);
+      animation: gradient 10s ease infinite;
+      background-size: 400% 400%;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    /* Dark Mode Grayscale Background */
+    .dark .gradient-bg {
+      background: linear-gradient(135deg, #2c2c2c, #3a3a3a, #4d4d4d);
+      animation: none;
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .dark .glass-effect {
+      background: rgba(40, 40, 40, 0.8);
+      border: 1px solid rgba(60, 60, 60, 0.5);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex flex-col items-center justify-center min-h-screen transition-colors duration-300" id="themeBody">
+<body class="gradient-bg text-gray-100 flex flex-col items-center justify-center min-h-screen transition-colors duration-300" id="themeBody">
 
   <!-- Dark Mode Toggle -->
-  <button id="themeToggle" class="absolute top-4 right-4 bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 px-4 py-2 rounded-full transition-colors duration-300">
-    Dark Mode
+  <button id="themeToggle" class="absolute top-4 right-4 bg-gray-800 text-white dark:bg-white dark:text-gray-800 px-4 py-2 rounded-full shadow-lg hover:scale-105 transition-transform duration-200">
+    🌗 Toggle Theme
   </button>
 
   <!-- Header -->
-  <header class="text-center mb-6">
-    <h1 class="text-4xl font-bold mb-2">Ideas to Podcast</h1>
-    <p class="text-lg text-gray-600 dark:text-gray-400">Transform any Ideas into an audio podcast!</p>
+  <header class="text-center mb-8 mt-6">
+    <h1 class="text-5xl font-extrabold mb-2 drop-shadow-lg">🎙️ Ideas to Podcast</h1>
+    <p class="text-lg text-gray-200 dark:text-gray-300">Transform your PDFs into engaging audio podcasts effortlessly!</p>
   </header>
 
-   <!-- Dropdown -->
-   <div>
-    <label for="ttsService">Select TTS Service:</label>
-    <select id="ttsService">
-        <option value="google">Google TTS</option>
-        <option value="amazon">Amazon Polly</option>
-        <option value="elevenlabs">ElevenLabs</option>
+  <!-- Dropdown for TTS Service -->
+  <div class="mb-6 text-center glass-effect p-4 shadow-lg">
+    <label for="ttsService" class="block text-lg font-semibold mb-2">🎧 Choose TTS Service</label>
+    <select id="ttsService" class="w-48 px-3 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
+      <option value="google">Google TTS</option>
+      <option value="amazon">Amazon Polly</option>
+      <option value="elevenlabs">ElevenLabs</option>
     </select>
   </div>
 
   <!-- Drag-and-Drop Zone -->
-  <div id="dropzone" 
-       class="border-4 border-dashed border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg p-10 text-center w-3/4 md:w-1/2 cursor-pointer">
-    <p class="text-gray-600 dark:text-gray-300">Drag and drop a PDF here or click to upload</p>
+  <div id="dropzone" class="glass-effect border-4 border-dashed border-gray-300 dark:border-gray-500 rounded-xl p-10 text-center w-3/4 md:w-1/2 cursor-pointer shadow-lg hover:scale-105 transition-transform duration-200">
+    <p class="text-xl font-medium text-gray-200 dark:text-gray-300">📂 Drag & drop a PDF here or click to upload</p>
     <input id="fileInput" type="file" accept=".pdf" class="hidden">
   </div>
 
-  <!-- Audio Player -->
-  <div id="audioContainer" class="hidden mt-6 text-center">
-    <audio id="audioPlayer" controls class="w-full md:w-2/3 mx-auto">
+  <!-- Audio Player Section -->
+  <div id="audioContainer" class="hidden mt-8 text-center glass-effect p-6 shadow-lg w-3/4 md:w-1/2 rounded-lg">
+    <h3 class="text-2xl font-bold mb-4">🎵 Your Podcast is Ready!</h3>
+    <audio id="audioPlayer" controls class="w-full mb-4 rounded-lg shadow-md">
       Your browser does not support the audio element.
     </audio>
-    <a id="downloadLink" class="block mt-4 text-blue-500 dark:text-blue-300 hover:underline" href="#" download="podcast.mp3">
-      Download Podcast
+    <a id="downloadLink" class="inline-block px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200" href="#" download="podcast.mp3">
+      📥 Download Podcast
     </a>
   </div>
+
   <!-- Footer -->
-  <footer class="text-gray-500 dark:text-gray-400 mt-12 text-center">
+  <footer class="text-gray-200 dark:text-gray-400 mt-12 text-center text-sm">
     <p>&copy; 2024 Eric Rusli Research Podcast Creator. Made with ❤️ for knowledge sharing.</p>
   </footer>
 
