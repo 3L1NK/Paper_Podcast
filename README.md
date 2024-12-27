@@ -3,6 +3,8 @@
 ## Overview
 The **Paper to Podcast** project allows users to upload a research paper (in PDF format) and transform it into an audio podcast using AI. This pipeline uses advanced techniques like Retrieval-Augmented Generation (RAG) and Text-to-Speech (TTS) to extract, summarize, and convert text into an audio file.
 
+![Alt Text](assets/web.png)
+
 ---
 
 ## Features
